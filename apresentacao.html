@@ -1,0 +1,799 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Da devolução à próxima reserva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<style>
+/* Layout: fixed side index of the storyline + one 16:9 stage that fills the rest of the screen and scales its type with it.
+   Deliberately single-theme (light deck in the case's green), every color set explicitly. */
+:root{
+  color-scheme:light;
+  --forest:#003b35;
+  --forest-2:#0b4f46;
+  --green:#00a868;
+  --lime:#72ef00;
+  --paper:#ffffff;
+  --mist:#eef5f1;
+  --tint:#f3faf6;
+  --line:#d3e4db;
+  --ink:#0f2f2b;
+  --text:#2b3d3a;
+  --muted:#5f716c;
+  --amber:#c98400;
+  --amber-bg:#fff4dc;
+  --soft:#9fc9b6;
+  --display:"Plus Jakarta Sans","Helvetica Neue",Arial,sans-serif;
+  --body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--mist);color:var(--text);font-family:var(--body);display:grid;grid-template-columns:auto minmax(0,1fr);overflow:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+
+/* ---------- side index ---------- */
+.side{width:250px;height:100%;background:var(--forest);color:#d9efe6;display:flex;flex-direction:column;transition:width .2s ease;overflow:hidden}
+.side.closed{width:0}
+.side-head{padding:22px 20px 12px;display:flex;flex-direction:column;gap:6px}
+.wm{font-family:var(--body);font-weight:700;font-size:21px;letter-spacing:0;color:#fff;line-height:1;white-space:nowrap}
+.wm i{font-style:normal;color:var(--lime)}
+.side-head small{font-size:12.5px;color:#9fcbb9;white-space:nowrap}
+.toc{flex:1;overflow-y:auto;padding:4px 10px 12px}
+.toc h4{font-family:var(--display);font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7fb7a1;margin:14px 10px 4px;white-space:nowrap}
+.toc button{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;border:0;background:transparent;color:#cfe8dd;padding:6px 10px;border-radius:7px;cursor:pointer;font-size:14px;white-space:nowrap}
+.toc button span{font-variant-numeric:tabular-nums;color:#7fb7a1;font-size:12px;width:1.4em;flex:none}
+.toc button:hover{background:rgba(255,255,255,.07)}
+.toc button.on{background:var(--lime);color:var(--forest);font-weight:700}
+.toc button.on span{color:var(--forest)}
+.side-foot{padding:12px 14px 16px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:8px}
+.side-foot button{flex:1;border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;border-radius:999px;padding:7px 0;cursor:pointer;font-size:13px;font-weight:600}
+.side-foot button:hover{background:rgba(255,255,255,.08)}
+
+/* ---------- stage ---------- */
+.main{position:relative;height:100%;container-type:size;display:grid;place-items:center;padding:14px}
+.stage{width:min(100cqw - 28px, (100cqh - 28px) * 16 / 9);aspect-ratio:16/9;max-width:100%;container-type:inline-size;position:relative}
+.ctrl{position:absolute;right:18px;bottom:16px;display:flex;gap:6px;z-index:5;opacity:.35;transition:opacity .2s}
+.ctrl:hover,.ctrl:focus-within{opacity:1}
+.ctrl button{border:1px solid var(--line);background:var(--paper);color:var(--forest);border-radius:999px;height:32px;min-width:32px;padding:0 10px;cursor:pointer;font-size:13px;font-weight:700}
+.ctrl .count{align-self:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;padding:0 4px}
+
+.slide{display:none;position:absolute;inset:0;background:var(--paper);border-radius:1.1cqw;box-shadow:0 1cqw 3cqw rgba(0,59,53,.13);overflow:hidden;flex-direction:column;padding:3.4cqw 4.4cqw 2.4cqw;font-size:1.7cqw;line-height:1.4}
+.slide.on{display:flex}
+.slide.dark{background:var(--forest);color:#dff2ea}
+.slide.dark::after{content:"";position:absolute;right:-14cqw;top:-18cqw;width:44cqw;height:44cqw;border-radius:50%;background:var(--forest-2)}
+.slide>*{position:relative;z-index:2}
+.eyebrow{font-family:var(--display);font-size:.7em;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin:0 0 .5em}
+h1{font-family:var(--display);font-weight:800;font-size:3.9em;line-height:1.02;letter-spacing:-.025em;margin:0;color:#fff;text-wrap:balance;max-width:13ch}
+h2{font-family:var(--display);font-weight:800;font-size:2em;line-height:1.12;letter-spacing:-.02em;margin:0 0 .75em;color:var(--forest);text-wrap:balance;max-width:30ch}
+h3{font-family:var(--display);font-weight:700;font-size:.98em;margin:0 0 .35em;color:var(--forest);line-height:1.2}
+p{margin:0}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;gap:1.1em}
+.body>*{flex-shrink:0}
+.foot{display:flex;justify-content:space-between;gap:2em;font-size:.58em;color:var(--muted);border-top:1px solid var(--line);padding-top:.6em;margin-top:.8em}
+.dark .foot{border-color:rgba(255,255,255,.16);color:#9fcbb9}
+.small{font-size:.84em;color:var(--muted)}
+.grid{display:grid;gap:1.1em}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.box{background:var(--tint);border:1px solid var(--line);border-radius:.8em;padding:.9em 1.05em;min-width:0;display:flex;flex-direction:column;gap:.35em}
+.box.hl{background:var(--forest);border-color:var(--forest);color:#dff2ea}
+.box.hl h3{color:#fff}
+.box.dim{opacity:.5}
+.num{font-family:var(--display);font-weight:800;font-size:2.2em;line-height:1;color:var(--forest);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.num small{font-size:.45em;font-weight:700;color:var(--muted);letter-spacing:0;margin-left:.15em}
+.box.hl .num{color:var(--lime)}
+.box.hl .num small{color:#b9e2d1}
+.lbl{font-size:.82em;color:var(--muted);line-height:1.3}
+.k{font-family:var(--display);font-size:.72em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.box.hl .lbl,.box.hl .k{color:#b9e2d1}
+table{border-collapse:collapse;width:100%;font-size:.82em;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:.5em .65em;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-family:var(--display);color:var(--muted);font-weight:700;font-size:.78em;text-transform:uppercase;letter-spacing:.05em}
+td.r,th.r{text-align:right}
+tr.sel td{background:#effcdf;font-weight:600;color:var(--forest)}
+td b.hot{color:#a35f00}
+.callout{background:var(--forest);color:#dff2ea;border-radius:.8em;padding:.85em 1.15em;line-height:1.35}
+.callout b{color:var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--display);font-weight:700;font-size:.74em;text-decoration:none;background:var(--lime);color:var(--forest);padding:.55em 1.1em;border-radius:99px;align-self:flex-start;white-space:nowrap}
+.btn:hover{filter:brightness(.95)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:1em}
+
+/* bars drawn to scale (width = value %) */
+.bars{display:flex;flex-direction:column;gap:.5em}
+.brow{display:grid;grid-template-columns:9.5em minmax(0,1fr) 3em;gap:.7em;align-items:center;font-size:.84em}
+.brow .tr{height:1.1em;background:#e7f1ec;border-radius:.3em;overflow:hidden}
+.brow .tr i{display:block;height:100%;background:var(--green);border-radius:.3em}
+.brow.key .tr i{background:var(--forest)}
+.brow.warn .tr i{background:var(--amber)}
+.brow b{font-variant-numeric:tabular-nums;color:var(--forest);text-align:right}
+
+/* process flow */
+.flow{display:flex;align-items:stretch;gap:0}
+.st{flex:1;border:1px solid var(--line);border-radius:.8em;padding:.8em .8em .9em;background:var(--paper);display:flex;flex-direction:column;gap:.3em;min-width:0}
+.st .n{font-family:var(--display);font-weight:800;font-size:.68em;color:var(--green);letter-spacing:.1em}
+.st b{font-family:var(--display);color:var(--forest);font-size:.95em;line-height:1.15}
+.st span{font-size:.72em;color:var(--muted);line-height:1.3}
+.st.hl{background:var(--forest);border-color:var(--forest)}
+.st.hl b{color:#fff}.st.hl span{color:#b9e2d1}.st.hl .n{color:var(--lime)}
+.arr{flex:none;width:1.4em;display:grid;place-items:center;color:var(--soft);font-weight:700;font-size:1.1em}
+
+/* time split bar */
+.split{flex:none;display:flex;height:3.4em;border-radius:.6em;overflow:hidden;gap:2px}
+.split button{border:0;cursor:pointer;color:#fff;font-family:var(--display);font-weight:700;font-size:.76em;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 .7em;min-width:0;overflow:hidden;white-space:nowrap;transition:opacity .2s}
+.split button em{font-style:normal;font-weight:500;font-size:.9em;opacity:.9}
+.split.focus button:not(.on){opacity:.4}
+
+.pills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7em}
+.pill{font-family:var(--display);font-weight:700;font-size:.8em;padding:.8em 1em;border-radius:.7em;background:var(--tint);border:1px solid var(--line);color:var(--forest);line-height:1.2}
+
+.seg{flex:none;display:inline-flex;border:1.5px solid var(--forest);border-radius:99px;overflow:hidden;align-self:flex-start}
+.seg button{border:0;background:transparent;color:var(--forest);font-family:var(--display);font-weight:700;font-size:.76em;padding:.5em 1.2em;cursor:pointer}
+.seg button.on{background:var(--forest);color:var(--lime)}
+
+/* donuts drawn with conic-gradient, angle = value % */
+.donut{width:7.2em;height:7.2em;border-radius:50%;display:grid;place-items:center;flex:none}
+.donut::after{content:attr(data-v);width:62%;height:62%;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.45em;color:var(--forest)}
+.dq{display:flex;flex-direction:column;align-items:center;gap:.7em;text-align:center;min-width:0}
+.dq h3{font-size:.92em}
+.leg{display:flex;flex-direction:column;gap:.25em;font-size:.74em;align-self:stretch}
+.leg span{display:flex;align-items:center;gap:.5em;justify-content:space-between}
+.leg i{width:.75em;height:.75em;border-radius:.2em;flex:none}
+.leg em{font-style:normal;flex:1;text-align:left;color:var(--text)}
+.leg b{font-variant-numeric:tabular-nums;color:var(--forest)}
+
+.funnel{display:flex;align-items:stretch;gap:0}
+.funnel .box{flex:1}
+
+.photo{border-radius:.8em;overflow:hidden;min-height:0;background:var(--tint)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.quote{font-family:var(--display);font-weight:700;font-size:1.02em;color:var(--forest);border-left:.22em solid var(--lime);padding-left:.8em;line-height:1.3}
+.big-q{font-family:var(--display);font-weight:800;font-size:2.35em;line-height:1.12;letter-spacing:-.02em;color:#fff;max-width:25ch;text-wrap:balance}
+.big-q em{font-style:normal;color:var(--lime)}
+.kp5 .num{font-size:1.65em}
+.kp5 .box{padding:.75em .85em}
+.brow.w{grid-template-columns:10.5em minmax(0,1fr) 3em}
+table.big{font-size:.92em}
+table.big td{padding:.65em .7em}
+th.grp{text-align:center;border-bottom:1px solid var(--line)}
+.prog{border:1px solid var(--line);border-radius:.8em;padding:.75em 1em;display:flex;flex-direction:column;gap:.4em;background:var(--tint);min-width:0}
+.prog.hero{background:var(--forest);border-color:var(--forest)}
+.prog.hero .k{color:#b9e2d1}
+.pv{display:flex;align-items:baseline;gap:.35em;font-family:var(--display);font-variant-numeric:tabular-nums}
+.pv .from{font-weight:700;font-size:1.25em;color:var(--muted)}
+.prog.hero .pv .from{color:#9fcbb9}
+.pv .to-arrow{color:var(--green);font-size:1.1em;font-weight:800}
+.prog.hero .pv .to-arrow{color:var(--lime)}
+.pv .to{font-weight:800;font-size:2em;line-height:1;color:var(--forest);letter-spacing:-.02em}
+.prog.hero .pv .to{color:var(--lime)}
+.pv .u{font-size:.8em;font-weight:700;color:var(--muted)}
+.pbar{position:relative;height:.6em;border-radius:99px;background:#dfeae4;overflow:hidden}
+.prog.hero .pbar{background:rgba(255,255,255,.15)}
+.pbar i{position:absolute;top:0;bottom:0;left:0;border-radius:99px;transition:width .4s ease}
+.pbar .b0{background:var(--soft);z-index:1}
+.pbar .b1{background:var(--lime);z-index:0}
+.pbar .b2{background:var(--green);z-index:2}
+.delta{align-self:flex-start;font-family:var(--display);font-weight:800;font-size:.78em;padding:.25em .7em;border-radius:99px;background:var(--lime);color:var(--forest)}
+.prog:not(.hero) .delta{background:#dff5ea;color:#00714a}
+.rmx .st span{font-size:.66em}
+.rmx .st b{font-size:.88em}
+.rmx h2{margin-bottom:.5em}
+.st b{overflow-wrap:break-word;hyphens:auto}
+.f6 .st{padding:.75em .65em .85em}
+.f6 .st b{font-size:.84em}
+.f6 .arr{width:1.1em}
+.qr{background:#fff;border-radius:.7em;padding:.5em;width:8.4em;height:8.4em;flex:none}
+.qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:760px){
+  body{display:block;overflow:auto;padding-inline:16px;padding-block:16px}
+  .side{display:none}
+  .main{display:block;height:auto;container-type:normal;padding:0}
+  .stage{width:100%;aspect-ratio:auto}
+  .slide,.slide.on{display:flex;position:relative;inset:auto;font-size:15px;padding:22px 18px;margin-bottom:16px;border-radius:12px}
+  .g2,.g3,.g4,.pills{grid-template-columns:1fr}
+  .flow,.funnel{flex-direction:column}.arr{transform:rotate(90deg);height:1.4em;width:auto}
+  h1{font-size:40px}
+  .ctrl{display:none}
+  .brow{grid-template-columns:7em minmax(0,1fr) 3em}
+}
+</style>
+
+<aside class="side" id="side" aria-label="Roteiro da apresentação">
+  <div class="side-head"><div class="wm">Localiza<i>&amp;</i>Co</div><small>Case PO · Jessica Flores</small></div>
+  <nav class="toc" id="toc"></nav>
+  <div class="side-foot">
+    <button type="button" id="fs" title="Tela cheia (F)">Tela cheia</button>
+    <button type="button" id="hide" title="Esconder roteiro (M)">Esconder</button>
+  </div>
+</aside>
+
+<main class="main">
+<div class="stage" id="stage" lang="pt-BR">
+
+<!-- 1 -->
+<section class="slide dark" data-t="Capa" data-g="Abertura">
+  <div class="wm" style="font-size:1.35em">Localiza<i>&amp;</i>Co</div>
+  <div class="body" style="justify-content:center;gap:1.1em">
+    <p class="eyebrow" style="color:var(--lime)">Case de seleção · Product Owner · Relacionamento &amp; Atendimento</p>
+    <h1>Da devolução à próxima reserva</h1>
+  </div>
+  <div class="foot"><span>Jessica Flores</span><span>Outubro de 2026</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Como a operação funciona" data-g="Contexto">
+  <p class="eyebrow">Contexto</p>
+  <h2>Todo carro devolvido começa uma corrida até a próxima reserva</h2>
+  <div class="body" style="gap:1.6em">
+    <div class="flow f6">
+      <div class="st"><span class="n">01</span><b>Chegada e fila</b><span>Carro devolvido aguarda triagem</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">02</span><b>Inspeção</b><span>Fotos, avarias e telemetria</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">03</span><b>Abastecimento</b><span>Quando o tanque não volta cheio</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">04</span><b>Lavagem</b><span>Expressa, Padrão ou Pesada</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">05</span><b>Exceções</b><span>Manutenção ou avaria</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">06</span><b>Liberação</b><span>Pronto para o próximo cliente</span></div>
+    </div>
+    <div>
+      <p class="eyebrow" style="margin-bottom:.8em">O que significa vencer</p>
+      <div class="pills">
+        <span class="pill">Mais carros prontos no momento certo</span>
+        <span class="pill">Menos variabilidade e retrabalho</span>
+        <span class="pill">Confiança sem custo oculto</span>
+        <span class="pill">Core reutilizável</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide dark" data-t="Problema central" data-g="Contexto">
+  <p class="eyebrow" style="color:var(--lime)">Problema central</p>
+  <div class="body" style="justify-content:center;gap:1.6em">
+    <p class="big-q">Como reduzir o <em>tempo</em> e a <em>variabilidade</em> da preparação, mantendo segurança, qualidade, eficiência econômica e confiança do cliente?</p>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Base de dados" data-g="Dados">
+  <p class="eyebrow">Base de dados</p>
+  <h2>950 devoluções confiáveis, e 137 delas são problema de agenda, não de pit stop</h2>
+  <div class="body" style="gap:1.4em">
+    <div class="funnel">
+      <div class="box"><span class="k">Extrato</span><div class="num">1.412</div><p class="lbl">linhas na aba EVENTOS</p></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="box"><span class="k">Duplicidade</span><div class="num">−12</div><p class="lbl">event_id repetidos. Fica a última versão.</p></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="box"><span class="k">Veículo inconsistente</span><div class="num">−450</div><p class="lbl">devoluções de 209 veículos com dados que não fecham entre linhas</p></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="box hl"><span class="k">Base analisada</span><div class="num">950</div><p class="lbl">devoluções, de 05/01 a 04/05/2026</p></div>
+    </div>
+    <div class="box" style="flex-direction:row;align-items:center;gap:1.2em">
+      <div class="num" style="font-size:1.7em">137</div>
+      <p style="font-size:.88em">devoluções têm só 35 min até a próxima reserva e só 2% ficam prontas. <b>É agenda, não pit stop:</b> olho as outras <b>813 (janela normal)</b> à parte.</p>
+    </div>
+    <p class="small">O mesmo veículo aparece com categoria, ano, odômetro ou datas que não fecham. Por isso, tirei todas as devoluções dele.</p>
+    <a class="btn" href="painel.html#qualidade" target="_blank" rel="noopener">Abrir a qualidade dos dados no painel ↗</a>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="O que os números mostram" data-g="Dados">
+  <p class="eyebrow">O que os números mostram</p>
+  <h2>84 min em média até liberar, e 25% dos carros não ficam prontos a tempo</h2>
+  <div class="body">
+    <div class="grid" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:1.4em;align-items:start">
+      <div class="grid g3 kp5" style="gap:.8em">
+        <div class="box"><span class="k">Devoluções</span><div class="num">950</div><p class="lbl">238 por mês</p></div>
+        <div class="box"><span class="k">Tempo médio</span><div class="num">84<small>min</small></div><p class="lbl">da devolução à liberação</p></div>
+        <div class="box"><span class="k">Acima da meta</span><div class="num">31%</div><p class="lbl">meta de tempo de cada agência</p></div>
+        <div class="box hl"><span class="k">Não prontos a tempo</span><div class="num">25%</div><p class="lbl">240 carros, com 45 min de atraso médio</p></div>
+        <div class="box"><span class="k">Custo operacional</span><div class="num" style="white-space:nowrap">R$ 38<small>mil</small></div><p class="lbl">por mês · R$ 158 por devolução</p></div>
+        <div class="box"><span class="k">Contestação</span><div class="num">3%</div><p class="lbl">das cobranças extras</p></div>
+      </div>
+      <div class="box" style="background:var(--paper)">
+        <h3>Atraso por agência</h3>
+        <p class="lbl" style="margin-bottom:.5em">% das devoluções não prontas antes da próxima reserva</p>
+        <div class="bars">
+          <div class="brow warn w"><span>São Paulo Aeroporto</span><span class="tr"><i style="width:34%"></i></span><b>34%</b></div>
+          <div class="brow warn w"><span>Recife Aeroporto</span><span class="tr"><i style="width:33%"></i></span><b>33%</b></div>
+          <div class="brow w"><span>BH Aeroporto</span><span class="tr"><i style="width:25%"></i></span><b>25%</b></div>
+          <div class="brow w"><span>Fortaleza Aeroporto</span><span class="tr"><i style="width:22%"></i></span><b>22%</b></div>
+          <div class="brow w"><span>São Paulo Centro</span><span class="tr"><i style="width:13%"></i></span><b>13%</b></div>
+          <div class="brow w"><span>Curitiba Centro</span><span class="tr"><i style="width:12%"></i></span><b>12%</b></div>
+        </div>
+      </div>
+    </div>
+    <a class="btn" href="painel.html#indicadores" target="_blank" rel="noopener">Abrir os indicadores no painel ↗</a>
+  </div>
+  <div class="foot"><span>Base: 950 devoluções. Custos pela aba PARAMETROS.</span><span class="pg"></span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Onde está o tempo" data-g="Diagnóstico">
+  <p class="eyebrow">Diagnóstico</p>
+  <h2>Lavagem e espera somam mais da metade do tempo do pit stop</h2>
+  <div class="body" style="gap:1.3em">
+    <p class="small">Participação de cada etapa nos 84 min médios. Clique em uma etapa.</p>
+    <div class="split" id="split">
+      <button type="button" data-k="0" style="flex:12;background:#5b8f84">Inspeção<em>12%</em></button>
+      <button type="button" data-k="1" style="flex:13;background:#3f7a6d">Abastec.<em>13%</em></button>
+      <button type="button" data-k="2" style="flex:34;background:var(--forest)">Lavagem<em>34%</em></button>
+      <button type="button" data-k="3" style="flex:12;background:#8aa9a1">Manutenção<em>12%</em></button>
+      <button type="button" data-k="4" style="flex:7;background:#a9c0ba">Avaria<em>7%</em></button>
+      <button type="button" data-k="5" style="flex:22;background:var(--amber)">Espera<em>22%</em></button>
+    </div>
+    <div class="grid g3">
+      <div class="box"><span class="k">Etapa</span><div class="num" id="siName" style="font-size:1.6em">Lavagem</div></div>
+      <div class="box"><span class="k">Carros que passam</span><div class="num" id="siPass">96%</div></div>
+      <div class="box hl"><span class="k">Tempo médio na etapa</span><div class="num" id="siMean">30<small>min</small></div><p class="lbl" id="siShare">34% do tempo total</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Espera = tempo total menos as etapas registradas.</span><span class="pg"></span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Indicadores da lavagem" data-g="Diagnóstico">
+  <p class="eyebrow">Diagnóstico · lavagem</p>
+  <h2>O tipo de lavagem define o tempo, e um fornecedor é mais lento no mesmo tipo</h2>
+  <div class="body">
+    <table class="big">
+      <thead>
+        <tr><th rowspan="2">Tipo</th><th class="r" rowspan="2">Lavagem</th><th class="r" rowspan="2">Pit stop</th><th class="r" rowspan="2">Atrasam*</th><th class="r grp" colspan="3">Tempo de lavagem por fornecedor (min)</th></tr>
+        <tr><th class="r">Equipe própria</th><th class="r">PrimeClean</th><th class="r">EcoWash</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Expressa</td><td class="r">18 min</td><td class="r">77 min</td><td class="r">19%</td><td class="r">16</td><td class="r">15</td><td class="r"><b class="hot">20</b></td></tr>
+        <tr><td>Padrão</td><td class="r">29 min</td><td class="r">85 min</td><td class="r">32%</td><td class="r">29</td><td class="r">28</td><td class="r"><b class="hot">32</b></td></tr>
+        <tr class="sel"><td>Pesada</td><td class="r">51 min</td><td class="r">100 min</td><td class="r">47%</td><td class="r">50</td><td class="r">51</td><td class="r"><b class="hot">59</b></td></tr>
+      </tbody>
+    </table>
+    <div class="grid g2" style="gap:1.1em">
+      <div class="box" style="background:var(--paper)"><p style="font-size:.88em">Quanto mais pesada a lavagem, <b>mais longo o pit stop e mais atraso</b>.</p></div>
+      <div class="box" style="background:var(--paper)"><p style="font-size:.88em">No mesmo tipo, a <b>EcoWash leva cerca de 4 min a mais</b> (8 na Pesada).</p></div>
+    </div>
+    <a class="btn" href="painel.html#lavagem" target="_blank" rel="noopener">Abrir as métricas de lavagem no painel ↗</a>
+  </div>
+  <div class="foot"><span>*Carros de rotina (sem manutenção nem avaria) com cliente em até 2 h. Médias, sem a lavagem "Dispensada".</span><span class="pg"></span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Priorização" data-g="Foco">
+  <p class="eyebrow">Priorização</p>
+  <h2>Três problemas competiam pelo foco. Priorizei a lavagem.</h2>
+  <div class="body" style="gap:1.3em">
+    <div class="grid g3">
+      <div class="box dim"><span class="k">Atraso</span><div class="num">25%</div><p class="lbl">dos carros não ficam prontos a tempo (240)</p></div>
+      <div class="box dim"><span class="k">Fila e espera</span><div class="num">84%</div><p class="lbl">dos carros esperam sem etapa, 25 min em média</p></div>
+      <div class="box hl"><span class="k">Lavagem</span><div class="num">96%</div><p class="lbl">dos carros passam por ela, 34% do tempo total</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="box" style="background:var(--paper)"><div class="num" style="font-size:1.55em">R$ 10 mil</div><p class="lbl">por mês de lavagem, um custo que se repete em 96% dos carros</p></div>
+      <div class="box" style="background:var(--paper)"><div class="num" style="font-size:1.55em">18 → 51 min</div><p class="lbl">da Expressa para a Pesada, em média</p></div>
+      <div class="box" style="background:var(--paper)"><div class="num" style="font-size:1.55em">47%</div><p class="lbl">das Pesadas atrasam, entre carros de rotina* com cliente em até 2 h</p></div>
+    </div>
+    <div class="callout">A lavagem é a <b>maior etapa</b>, se repete em <b>quase todo carro</b> e é a única que <b>dá para saber antes</b> do carro chegar.</div>
+  </div>
+  <div class="foot"><span>*Rotina = sem manutenção nem avaria. Base: 950 devoluções.</span><span class="pg"></span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="A virada" data-g="Foco">
+  <p class="eyebrow">A virada da análise</p>
+  <h2>Suspeitei do fornecedor. Os dados apontaram o tipo de lavagem.</h2>
+  <div class="body" style="gap:1.3em">
+    <div class="grid g2" style="gap:1.3em">
+      <div class="box">
+        <span class="k">1 · A suspeita</span>
+        <h3 style="font-size:1.1em">A EcoWash leva +4 min no mesmo tipo</h3>
+        <p style="font-size:.86em">Mesmo assim, tirar dela os carros apertados evitaria <b>~1 atraso</b> em 4 meses.</p>
+      </div>
+      <div class="box">
+        <span class="k">2 · O que separa o atrasado do pronto</span>
+        <div class="bars" style="margin-top:.3em">
+          <div class="brow"><span>Expressa</span><span class="tr"><i style="width:19%"></i></span><b>19%</b></div>
+          <div class="brow warn"><span>Padrão</span><span class="tr"><i style="width:32%"></i></span><b>32%</b></div>
+          <div class="brow warn"><span>Pesada</span><span class="tr"><i style="width:47%"></i></span><b>47%</b></div>
+        </div>
+        <p class="lbl">atrasam, entre carros de rotina com cliente em até 2 h</p>
+      </div>
+    </div>
+    <p class="quote">A lavagem é onde o tempo varia, e o tipo só aparece na chegada. Saber antes permite ordenar pela folga: o tempo até a próxima reserva.</p>
+    <p class="small">Provocação para o discovery: a Pesada atrasa quase metade dos carros que passam por ela. Todos precisavam dela?</p>
+  </div>
+  <div class="foot"><span>Rotina = sem manutenção nem avaria. 184 carros com cliente em até 2 h.</span><span class="pg"></span></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="Pesquisa com clientes" data-g="Campo">
+  <p class="eyebrow">Fui a campo · pesquisa com clientes</p>
+  <h2>7 em cada 10 clientes responderiam no app</h2>
+  <div class="body" style="gap:1.2em">
+    <div class="row" style="justify-content:flex-start;gap:.6em;font-size:.82em">
+      <span class="pill" style="padding:.45em .9em">48 responderam no Google Forms</span>
+      <span class="arr" aria-hidden="true">→</span>
+      <span class="pill" style="padding:.45em .9em;background:var(--forest);color:var(--lime);border-color:var(--forest)">28 já alugaram carro: base dos %</span>
+      <span class="small">20 nunca alugaram e ficaram fora</span>
+    </div>
+    <div class="grid g3" style="gap:1.6em;align-items:start">
+      <div class="dq">
+        <h3>Responderia no app?</h3>
+        <div class="donut" data-v="71%" style="background:conic-gradient(var(--forest) 0 71%,var(--green) 71% 96%,#d8e6df 96% 100%)"></div>
+        <div class="leg">
+          <span><i style="background:var(--forest)"></i><em>Sim, com certeza</em><b>71%</b></span>
+          <span><i style="background:var(--green)"></i><em>Talvez</em><b>25%</b></span>
+          <span><i style="background:#d8e6df"></i><em>Não</em><b>4%</b></span>
+        </div>
+      </div>
+      <div class="dq">
+        <h3>Para devolver mais rápido, prefere…</h3>
+        <div class="donut" data-v="50%" style="background:conic-gradient(var(--forest) 0 50%,#d8e6df 50% 75%,var(--amber) 75% 100%)"></div>
+        <div class="leg">
+          <span><i style="background:var(--forest)"></i><em>Só informar no app</em><b>50%</b></span>
+          <span><i style="background:#d8e6df"></i><em>Devolver como está</em><b>25%</b></span>
+          <span><i style="background:var(--amber)"></i><em>Lava-jato parceiro</em><b>25%</b></span>
+        </div>
+      </div>
+      <div class="dq">
+        <h3>Já esperou por um carro não pronto?</h3>
+        <div class="donut" data-v="57%" style="background:conic-gradient(var(--amber) 0 57%,#d8e6df 57% 100%)"></div>
+        <div class="leg">
+          <span><i style="background:var(--amber)"></i><em>Sim (21% de 30 a 60 min)</em><b>57%</b></span>
+          <span><i style="background:#d8e6df"></i><em>Não</em><b>43%</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Amostra de conveniência, em 1 dia. Sinal direcional, não estatística.</span><span class="pg"></span></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Como o cliente devolve hoje" data-g="Campo">
+  <p class="eyebrow">Fui a campo · pesquisa com clientes</p>
+  <h2>O cliente não quer lavar o carro: a dor dele é esperar na retirada</h2>
+  <div class="body" style="gap:1.4em">
+    <div class="grid" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.6em;align-items:start">
+      <div>
+        <h3>Na última devolução, você…</h3>
+        <div class="bars" style="margin-top:.5em">
+          <div class="brow key"><span>Tinha limpeza contratada</span><span class="tr"><i style="width:43%"></i></span><b>43%</b></div>
+          <div class="brow"><span>Só limpou por dentro</span><span class="tr"><i style="width:21%"></i></span><b>21%</b></div>
+          <div class="brow"><span>Devolveu como estava</span><span class="tr"><i style="width:14%"></i></span><b>14%</b></div>
+          <div class="brow"><span>Lavou antes</span><span class="tr"><i style="width:14%"></i></span><b>14%</b></div>
+          <div class="brow"><span>Não lembra</span><span class="tr"><i style="width:7%"></i></span><b>7%</b></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.9em">
+        <div class="box hl"><div class="num" style="font-size:1.7em">7 de 12</div><p class="lbl">que contrataram a limpeza citam praticidade ou comodidade</p></div>
+        <div class="box"><div class="num" style="font-size:1.7em">13 de 28</div><p class="lbl">marcaram "nada, eu não lavaria" como benefício para lavar antes</p></div>
+      </div>
+    </div>
+    <p class="quote">"Me incomoda a demora pra retirar, mas para devolver achei rápido."</p>
+  </div>
+  <div class="foot"><span>Base: 28 pessoas que já alugaram carro.</span><span class="pg"></span></div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Visita à agência" data-g="Campo">
+  <p class="eyebrow">Fui a campo · visita a uma agência em 01/10/2026</p>
+  <h2>A Localiza já leva o cliente para o app na retirada</h2>
+  <div class="body" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr);gap:1.2em">
+    <div class="photo"><img src="fachada.jpg" alt="Fachada de uma agência Localiza, com a frota no pátio coberto"></div>
+    <div class="photo"><img src="totem.jpg" alt="Totem FAST Retirada Digital no pátio, ao lado de um carro"></div>
+    <div style="display:flex;flex-direction:column;gap:.9em;min-width:0;justify-content:center">
+      <div class="box"><span class="k">O que observei</span><p style="font-size:.9em">Totem <b>FAST · Retirada Digital</b>: o cliente retira o carro pelo app, sem passar no balcão.</p></div>
+      <div class="box"><p style="font-size:.9em">O operador já usa um <b>app de checklist</b> no recebimento do carro.</p></div>
+      <div class="callout" style="font-size:.9em">A proposta leva essa lógica para a <b>devolução</b>, com canais que já existem.</div>
+    </div>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Alternativas" data-g="Solução">
+  <p class="eyebrow">Hipóteses de solução</p>
+  <h2>Avaliei seis alternativas e optei por saber antes como o carro chega</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:44%">Alternativa</th><th>O que os dados dizem</th></tr></thead>
+      <tbody>
+        <tr class="sel"><td>Saber antes como o carro chega e preparar primeiro quem tem menos folga</td><td>71% responderiam no app. A ordem de hoje não considera a próxima reserva.</td></tr>
+        <tr><td>Trocar o fornecedor mais lento ou mandar menos carros a ele</td><td>+4 min no mesmo tipo, mas evitaria ~1 atraso em 4 meses</td></tr>
+        <tr><td>Padronizar o processo do fornecedor mais lento</td><td>A base não mostra a causa da diferença</td></tr>
+        <tr><td>Lava-jato parceiro perto da loja</td><td>Só 25% topariam lavar antes</td></tr>
+        <tr><td>Prever o tipo de lavagem com IA</td><td>Ainda não existe histórico de tipo previsto × confirmado. O piloto gera esse dado.</td></tr>
+        <tr><td>Desconto na próxima locação para devolver o carro limpo</td><td>13 de 28 marcaram "nada, eu não lavaria". Quem contrata a limpeza busca praticidade.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="A solução" data-g="Solução">
+  <p class="eyebrow">A solução</p>
+  <h2>Saber antes como o carro chega e preparar primeiro quem tem menos folga</h2>
+  <div class="body" style="gap:1.4em">
+    <div class="flow">
+      <div class="st"><span class="n">VÉSPERA</span><b>Cliente informa</b><span>App ou WhatsApp: estado do carro e horário de chegada</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">ANTES DE CHEGAR</span><b>Loja se prepara</b><span>Painel ordena por menor folga até a próxima reserva</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st hl"><span class="n">NA CHEGADA</span><b>Operador confirma</b><span>O tipo real de lavagem. A pessoa decide.</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">DEPOIS</span><b>Sistema mede</b><span>Tempos do box e acerto da previsão</span></div>
+    </div>
+    <div class="grid" style="grid-template-columns:minmax(0,1fr) auto;gap:1.6em;align-items:start">
+      <div>
+        <p class="eyebrow">Métricas de sucesso</p>
+        <table>
+          <tbody>
+            <tr><td><b>North Star</b></td><td>Carros prontos antes da próxima reserva (janela normal)</td><td class="r">hoje 87%</td></tr>
+            <tr><td><b>Piloto</b></td><td>Tempo dos carros de rotina com cliente em até 2 h</td><td class="r">hoje 70 min</td></tr>
+            <tr><td><b>Adoção</b></td><td>Taxa de resposta e acerto do tipo previsto</td><td class="r">meta 70%</td></tr>
+            <tr><td><b>Guardrails</b></td><td>Carros com folga prontos · limpeza · custo por lavagem · contestação</td><td class="r">hoje 98% · 3%</td></tr>
+          </tbody>
+        </table>
+        <p class="small" style="margin-top:.6em">Sem resposta, nada piora: vale a ordem de chegada. A resposta nunca gera cobrança. Fora do MVP: manutenção, avaria e janela de 35 min.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.5em">
+        <div class="qr"><div id="qrbox" role="img" aria-label="QR Code do protótipo" style="width:100%;height:100%"></div></div>
+        <a class="btn" href="prototipo.html" target="_blank" rel="noopener">Abrir o protótipo ↗</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="Resultados esperados" data-g="Solução">
+  <p class="eyebrow">Resultados esperados · simulação na base</p>
+  <h2>Preparar primeiro quem tem menos folga recupera atrasos sem piorar a média</h2>
+  <div class="body" style="gap:.75em">
+    <div class="row">
+      <div class="seg" role="group" aria-label="Cenário">
+        <button type="button" data-s="0">Conservador</button>
+        <button type="button" data-s="1" class="on">Base</button>
+        <button type="button" data-s="2">Otimista</button>
+      </div>
+      <p class="small" id="scAssume" style="text-align:right;max-width:50ch"></p>
+    </div>
+    <div class="grid g3" style="gap:1em">
+      <div class="prog hero">
+        <span class="k">Prontos a tempo · rotina, cliente em até 2 h</span>
+        <div class="pv"><span class="from">71%</span><span class="to-arrow" aria-hidden="true">➜</span><span class="to" id="pU"></span></div>
+        <div class="pbar"><i class="b0" style="width:71%"></i><i class="b1" id="pUb"></i></div>
+        <span class="delta" id="pUd"></span>
+      </div>
+      <div class="prog">
+        <span class="k">Tempo dos carros priorizados</span>
+        <div class="pv"><span class="from">70</span><span class="to-arrow" aria-hidden="true">➜</span><span class="to" id="pT"></span><span class="u">min</span></div>
+        <div class="pbar"><i class="b0" id="pTb0"></i><i class="b2" id="pTb"></i></div>
+        <span class="delta" id="pTd"></span>
+      </div>
+      <div class="prog">
+        <span class="k">Prontos a tempo · janela normal</span>
+        <div class="pv"><span class="from">87%</span><span class="to-arrow" aria-hidden="true">➜</span><span class="to" id="pA"></span></div>
+        <div class="pbar"><i class="b0" style="width:87%"></i><i class="b1" id="pAb"></i></div>
+        <span class="delta" id="pAd"></span>
+      </div>
+    </div>
+    <div class="grid g2" style="gap:1em">
+      <div class="box" style="flex-direction:row;align-items:center;gap:1em"><div class="num" id="scSaved" style="font-size:1.7em"></div><p class="lbl" id="scSavedL"></p></div>
+      <div class="box" style="flex-direction:row;align-items:center;gap:1em"><div class="num" id="scMoney" style="font-size:1.7em;white-space:nowrap"></div><p class="lbl" id="scMoneyL"></p></div>
+    </div>
+    <p class="small">A espera que sai dos priorizados vai para carros com mais de 3 h de folga, na mesma agência: a média geral não muda. No Base, ~1 carro com folga passa a atrasar. Só trocar o fornecedor evitaria ~1 atraso.</p>
+  </div>
+  <div class="foot"><span>Simulação nas 813 devoluções da janela normal. Diária pela aba PARAMETROS.</span><span class="pg"></span></div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="Stakeholders" data-g="Execução">
+  <p class="eyebrow">Alinhar</p>
+  <h2>Todos ganham previsibilidade; o conflito é a espera que passa para quem tem folga</h2>
+  <div class="body">
+    <div class="grid g3">
+      <div class="box"><h3>Clientes</h3><p class="lbl">Devolver rápido, retirar sem esperar e não ser cobrado pelo que informou</p></div>
+      <div class="box"><h3>Operadores do pit stop</h3><p class="lbl">Saber o que vem e em que ordem atender, sem mais trabalho</p></div>
+      <div class="box"><h3>Gestão das agências</h3><p class="lbl">Mais carros prontos sem piorar quem tem folga. Patrocina o piloto.</p></div>
+      <div class="box"><h3>Fornecedores de lavagem</h3><p class="lbl">Demanda previsível e regras claras de distribuição</p></div>
+      <div class="box"><h3>Canais digitais e SAC</h3><p class="lbl">Mensagem clara no app e no WhatsApp, sem gerar contestação</p></div>
+      <div class="box"><h3>Reservas e Tecnologia</h3><p class="lbl">Horário da próxima reserva e integração com o app do operador</p></div>
+    </div>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 17 -->
+<section class="slide rmx" data-t="Roadmap e riscos" data-g="Execução" id="rm">
+  <p class="eyebrow">Executar</p>
+  <h2>Piloto em 1 agência: medir antes de decidir os próximos passos</h2>
+  <div class="body" style="gap:.7em">
+    <div class="flow">
+      <div class="st"><span class="n">SEMANAS 1–2</span><b>Discovery</b><span>Operação, critério do tipo de lavagem, custo do WhatsApp</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st hl"><span class="n">M1 · MVP</span><b>O cliente responde?</b><span>A/B de canal: app × WhatsApp. Resposta e acerto.</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">M2–M3</span><b>A ordem funciona?</b><span>Painel em dias alternados na mesma agência.</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">M4</span><b>Medir e decidir</b><span>Escalar, ajustar ou parar</span></div>
+      <div class="arr" aria-hidden="true">→</div>
+      <div class="st"><span class="n">PRÓXIMO SEMESTRE</span><b>Evoluir pelo resultado</b><span>O aviso de véspera vira dado reutilizável para prever o tipo de lavagem</span></div>
+    </div>
+    <div class="callout" style="font-size:.8em"><b>Dono:</b> PO de Relacionamento &amp; Atendimento, com o gestor da agência. <b>Escala:</b> agências com mais atraso (SP Aeroporto, Recife).<br><b>Sucesso:</b> 70 → 62 min nos carros de rotina com cliente em até 2 h, sem piorar guardrail. <b>Parar se:</b> resposta abaixo de 50% ou se carros com folga passarem a atrasar.</div>
+    <table style="font-size:.8em">
+      <thead><tr><th>Risco</th><th>Mitigação</th></tr></thead>
+      <tbody>
+        <tr><td>Carros com folga passarem a atrasar</td><td>Espera vai para quem tem mais de 3 h. Simulação: ~1 carro em 4 meses.</td></tr>
+        <tr><td>Operador não confiar na ordem do painel</td><td>O painel mostra a folga de cada carro. A decisão final é do operador.</td></tr>
+        <tr><td>Custo por mensagem no WhatsApp</td><td>Medir custo por resposta no A/B. Priorizar o app.</td></tr>
+        
+        
+      </tbody>
+    </table>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<!-- 18 -->
+<section class="slide dark" data-t="Fechamento" data-g="Execução">
+  <div class="body" style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:2.4em;align-items:center">
+    <div style="display:flex;flex-direction:column;gap:1.1em">
+      <p class="eyebrow" style="color:var(--lime)">O que proponho decidir hoje</p>
+      <p class="big-q" style="font-size:2em">Piloto em 1 agência por 3 meses: <em>o próximo cliente primeiro</em>.</p>
+      <div style="display:flex;flex-direction:column;gap:.4em;font-size:.88em;color:#cdeedd">
+        <p><b style="color:#fff">Preciso de:</b> horário da próxima reserva, integração com o app do operador e um gestor de agência patrocinador.</p>
+        <p><b style="color:#fff">Decido no mês 4:</b> escalo se o tempo dos carros de rotina com cliente em até 2 h cair sem piorar guardrail; paro se a resposta ficar abaixo de 50% ou se carros com folga passarem a atrasar.</p>
+        <p style="margin-top:.6em;font-family:var(--display);font-weight:700;color:#fff;font-size:1.15em">Obrigada! Vamos conversar?</p>
+      </div>
+    </div>
+    <div class="photo" style="height:100%;max-height:38cqw"><img src="eu.jpg" alt="Jessica Flores no pátio de uma agência Localiza"></div>
+  </div>
+  <div class="foot"><span>Jessica Flores</span><span class="pg"></span></div>
+</section>
+
+<!-- Anexos -->
+<section class="slide" data-t="Questionamentos" data-g="Anexo">
+  <p class="eyebrow">Anexo · Discovery</p>
+  <h2>Questionamentos a explorar com os stakeholders</h2>
+  <div class="body">
+    <div class="grid g3">
+      <div class="box"><span class="k">Operação</span>
+        <p style="font-size:.84em">Quem decide o tipo de lavagem, e com qual critério?</p>
+        <p style="font-size:.84em">Onde o carro espera: box, pessoa ou vaga?</p>
+        <p style="font-size:.84em">Todos os carros na Pesada precisavam dela?</p></div>
+      <div class="box"><span class="k">Fornecedores e Suprimentos</span>
+        <p style="font-size:.84em">Como os carros são distribuídos entre equipe própria e terceiros?</p>
+        <p style="font-size:.84em">Por que a EcoWash é mais lenta: método, equipe, equipamento ou registro?</p></div>
+      <div class="box"><span class="k">Reservas e Canais digitais</span>
+        <p style="font-size:.84em">Existe hoje alguma priorização pelo próximo cliente?</p>
+        <p style="font-size:.84em">Quantos clientes usam o app na devolução? O WhatsApp é canal oficial?</p></div>
+    </div>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+<section class="slide" data-t="Uso de IA" data-g="Anexo">
+  <p class="eyebrow">Anexo · Transparência</p>
+  <h2>Como usei IA neste case</h2>
+  <div class="body">
+    <div class="grid g2">
+      <div class="box"><h3>Ferramentas</h3><p class="lbl">Claude e ChatGPT. Testei as duas no mesmo problema e segui com o Claude.</p></div>
+      <div class="box"><h3>Finalidade</h3><p class="lbl">Análise exploratória da base, painel, simulação de cenários, protótipo e estrutura desta apresentação.</p></div>
+      <div class="box"><h3>Verificações</h3><p class="lbl">Conferi os números principais no Excel com um gabarito de fórmulas e comparei as respostas das ferramentas.</p></div>
+      <div class="box"><h3>Limitações</h3><p class="lbl">Base fictícia e amostral. Quando a IA afirmava mais do que os dados mostravam, isso virou pergunta de discovery.</p></div>
+    </div>
+    <div class="callout">A IA acelerou a análise. <b>As escolhas e a responsabilidade pelas conclusões são minhas.</b></div>
+  </div>
+  <div class="foot"><span></span><span class="pg"></span></div>
+</section>
+
+</div>
+<div class="ctrl" aria-label="Navegação">
+  <button type="button" id="menu" title="Mostrar ou esconder o roteiro (M)">☰</button>
+  <button type="button" id="prev" aria-label="Slide anterior">←</button>
+  <span class="count" id="count"></span>
+  <button type="button" id="next" aria-label="Próximo slide">→</button>
+</div>
+</main>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var n=slides.length,i=0,toc=document.getElementById('toc'),lastG='',btns=[];
+  slides.forEach(function(s,k){
+    var g=s.dataset.g;
+    if(g!==lastG){var h=document.createElement('h4');h.textContent=g;toc.appendChild(h);lastG=g}
+    var b=document.createElement('button');b.type='button';
+    b.innerHTML='<span>'+(k+1)+'</span>'+s.dataset.t;
+    b.addEventListener('click',function(){go(k)});toc.appendChild(b);btns.push(b);
+    var pg=s.querySelector('.pg');if(pg)pg.textContent=(k+1)+' / '+n;
+  });
+  function go(k){
+    i=Math.max(0,Math.min(n-1,k));
+    slides.forEach(function(s,j){s.classList.toggle('on',j===i)});
+    btns.forEach(function(b,j){b.classList.toggle('on',j===i)});
+    if(btns[i])btns[i].scrollIntoView({block:'nearest'});
+    document.getElementById('count').textContent=(i+1)+' / '+n;
+    try{history.replaceState(null,'','#s'+(i+1))}catch(e){}
+  }
+  var side=document.getElementById('side');
+  function toggleSide(){side.classList.toggle('closed')}
+  function fs(){try{if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(function(){})}else{document.exitFullscreen()}}catch(e){}}
+  document.getElementById('prev').onclick=function(){go(i-1)};
+  document.getElementById('next').onclick=function(){go(i+1)};
+  document.getElementById('menu').onclick=toggleSide;
+  document.getElementById('hide').onclick=toggleSide;
+  document.getElementById('fs').onclick=fs;
+  document.addEventListener('keydown',function(e){
+    if(e.target.closest&&e.target.closest('input,textarea'))return;
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'||k===' '){e.preventDefault();go(i+1)}
+    else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();go(i-1)}
+    else if(k==='Home')go(0);else if(k==='End')go(n-1);
+    else if(k==='m'||k==='M')toggleSide();else if(k==='f'||k==='F')fs();
+  });
+
+  /* time split: [name, % of cars, mean min, share of total] */
+  var info=[['Inspeção','100%','10','12%'],['Abastecimento','84%','13','13%'],['Lavagem','96%','30','34%'],['Manutenção','8%','119','12%'],['Avaria','7%','85','7%'],['Espera','84%','25','22%']];
+  var split=document.getElementById('split');
+  function pick(k){
+    [].forEach.call(split.children,function(b,j){b.classList.toggle('on',j===k)});
+    split.classList.add('focus');
+    document.getElementById('siName').textContent=info[k][0];
+    document.getElementById('siPass').textContent=info[k][1];
+    document.getElementById('siMean').innerHTML=info[k][2]+'<small>min</small>';
+    document.getElementById('siShare').textContent=info[k][3]+' do tempo total';
+  }
+  [].forEach.call(split.children,function(b){b.addEventListener('click',function(){pick(+b.dataset.k)})});
+  pick(2);
+
+  /* scenarios (simulation on the 813 normal-window returns) */
+  var sc=[
+    {a:'50% dos clientes respondem · espera dos priorizados cai 25%',u:75,ud:'+4 p.p.',t:63,td:'−7 min (−10%)',r:88,rd:'+1 p.p.',s:'~7',sl:'atrasos evitados em 4 meses (~2 por mês)',m:'R$ 400',ml:'por mês em diárias protegidas (3% dos R$ 15 mil/mês em diárias em risco)'},
+    {a:'~70% respondem (taxa da pesquisa) · espera dos priorizados cai 50%',u:79,ud:'+8 p.p.',t:58,td:'−12 min (−17%)',r:89,rd:'+2 p.p.',s:'~14',sl:'atrasos evitados em 4 meses (~4 por mês)',m:'R$ 800',ml:'por mês em diárias protegidas (6% dos R$ 15 mil/mês em diárias em risco)'},
+    {a:'95% respondem · espera dos priorizados cai 75%',u:85,ud:'+14 p.p.',t:52,td:'−18 min (−25%)',r:90,rd:'+3 p.p.',s:'~24',sl:'atrasos evitados em 4 meses (~6 por mês)',m:'R$ 1.500',ml:'por mês em diárias protegidas (10% dos R$ 15 mil/mês em diárias em risco)'}
+  ];
+  var segB=[].slice.call(document.querySelectorAll('.seg button'));
+  function $(id){return document.getElementById(id)}
+  function br(x){return x.toFixed(1).replace('.',',')}
+  function scen(k){
+    segB.forEach(function(b,j){b.classList.toggle('on',j===k)});
+    var c=sc[k];
+    $('scAssume').textContent=c.a;
+    $('pU').textContent=c.u+'%';$('pUb').style.width=c.u+'%';$('pUd').textContent=c.ud;
+    $('pT').textContent=c.t;$('pTb0').style.width='70%';$('pTb').style.width=c.t+'%';$('pTd').textContent=c.td;
+    $('pA').textContent=c.r+'%';$('pAb').style.width=c.r+'%';$('pAd').textContent=c.rd;
+    $('scSaved').textContent=c.s;$('scSavedL').textContent=c.sl;
+    $('scMoney').textContent=c.m;$('scMoneyL').textContent=c.ml;
+  }
+  segB.forEach(function(b){b.addEventListener('click',function(){scen(+b.dataset.s)})});
+  scen(1);
+
+  var m=/^#s(\d+)$/.exec(location.hash);go(m?parseInt(m[1],10)-1:0);
+})();
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(function(){
+  var box=document.getElementById('qrbox'); if(!box) return;
+  var url=new URL('prototipo.html', location.href).href;
+  try{
+    var q=qrcode(0,'M'); q.addData(url); q.make();
+    box.innerHTML=q.createSvgTag({scalable:true,margin:0});
+    var s=box.querySelector('svg'); if(s){s.style.width='100%';s.style.height='100%';}
+  }catch(e){ box.textContent=url; box.style.fontSize='.5em'; box.style.wordBreak='break-all'; }
+})();
+</script>
+</body></html>
