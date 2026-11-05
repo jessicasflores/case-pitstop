@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Triagem da Lavagem</title>
@@ -175,14 +174,75 @@ tr.gone td{opacity:.55}
 .howgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
 .src{font-size:11px;color:var(--muted);margin-top:6px}
-@media (max-width:1200px){.opgrid{grid-template-columns:1fr}.opside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.catgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (max-width:900px){.appwrap,.howgrid,.g2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.opside{grid-template-columns:1fr}.catgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+html.lt1200 .opgrid{grid-template-columns:1fr}html.lt1200 .opside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}html.lt1200 .catgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+html.lt900 .appwrap,html.lt900 .howgrid,html.lt900 .g2{grid-template-columns:1fr}html.lt900 .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}html.lt900 .kpis>.kpi:last-child:nth-child(odd){grid-column:1/-1}html.lt900 .opside{grid-template-columns:1fr}html.lt900 .catgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* ---------- view switch (Celular / Computador) ---------- */
+.viewsw{display:inline-flex;border:1px solid rgba(255,255,255,.35);border-radius:999px;overflow:hidden;flex:none}
+.viewsw button{background:transparent;border:0;color:#d8f1e6;padding:6px 11px;font-weight:700;font-size:12px;display:inline-flex;gap:5px;align-items:center}
+.viewsw button[aria-pressed="true"]{background:#fff;color:var(--brand)}
+.toprow{display:flex;gap:10px;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap}
+.top{top:env(safe-area-inset-top,0px)}
+/* forced desktop on a narrow screen: lay out at 1280px and scale down */
+html.dzoom body{width:1280px;zoom:var(--dz,1)}
+/* forced phone on a wide screen: centre a phone-width column */
+html.mframe{background:#c9d9d1}
+html.mframe body{max-width:430px;margin:0 auto;box-shadow:0 0 0 1px var(--line),0 20px 60px rgba(0,59,53,.25);min-height:100vh}
+/* ---------- phone layout ---------- */
+html.m .top .in{padding:10px 14px;gap:10px}
+html.m .brandrow{gap:10px}
+html.m .brandrow img{height:18px}
+html.m .brandname{font-size:15px}
+html.m .tagline{font-size:9.5px}
+html.m .tabs{flex-wrap:nowrap;overflow-x:auto;width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+html.m .tabs::-webkit-scrollbar{display:none}
+html.m .tabs button{flex:none;font-size:12.5px;padding:7px 11px}
+html.m .note{font-size:11px;padding:6px 14px}
+html.m main{padding:14px 14px 40px}
+html.m h1{font-size:19px}
+html.m .card{padding:13px;border-radius:12px}
+html.m .phone{background:none;padding:0;box-shadow:none;border-radius:0;max-width:none}
+html.m .screen{height:620px;border-radius:18px;border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,59,53,.12)}
+html.m .appwrap{gap:16px}
+html.m .ctrl .lbl{min-width:0;width:100%}
+html.m .seg{display:flex;width:100%}
+html.m .seg button{flex:1;padding:8px 6px;font-size:12.5px}
+html.m .simbar{padding:10px 12px;gap:10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--toph,96px));z-index:4;box-shadow:0 6px 14px rgba(0,59,53,.08)}
+html.m .simbar .cap{display:none}
+html.m .simbar select{max-width:100%;flex:1}
+html.m .clockbig{font-size:20px}
+html.m .kpi{padding:10px 12px}
+html.m .kpi b{font-size:20px}
+html.m .catgrid{gap:10px}
+html.m .boxes{grid-template-columns:1fr 1fr}
+html.m .drawer .panel{width:100%;padding:16px 14px}
+html.m .types{grid-template-columns:1fr 1fr}
+/* tables become cards */
+html.m table.cards thead{display:none}
+html.m table.cards,html.m table.cards tbody{display:block}
+html.m table.cards tr{display:block;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 10px}
+html.m table.cards td{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border:0;padding:5px 0;text-align:right}
+html.m table.cards td>*{text-align:right}
+html.m table.cards td::before{content:attr(data-label);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;flex:none;padding-top:2px}
+html.m table.cards td:first-child{padding:2px 0 8px;margin-bottom:4px;border-bottom:1px solid var(--line);text-align:left;display:block}
+html.m table.cards td:first-child::before{display:none}
+html.m table.cards td:first-child>*{text-align:left}
+html.m table.cards td:last-child:empty{display:none}
+html.m table.cards td.act::before{display:none}
+html.m table.cards td.act{justify-content:flex-end;padding-top:8px}
+html.m table.cards td.act .btn{flex:1;padding:10px 12px}
+html.m table.cards tr.risk{box-shadow:inset 4px 0 0 var(--red)}
+html.m table.cards tr.warn{box-shadow:inset 4px 0 0 #e0a100}
+html.m table.cards tr td:first-child{box-shadow:none!important}
+html.m table.cards .stp{justify-content:flex-end;max-width:none}
+html.m .tablewrap.cardswrap{overflow:visible}
+html.m .card:has(> .tablewrap.cardswrap){background:transparent;border:0;padding:0!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 
 <header class="top">
   <div class="in">
     <div class="brandrow"><img alt="Localiza&amp;Co" src="data:image/png;base64,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"><span class="sep" aria-hidden="true"></span><div><div class="tagline">Case de seleção · protótipo conceitual</div><div class="brandname">Triagem da <span>Lavagem</span></div></div></div>
+    <div class="viewsw" role="group" aria-label="Visualização"><button id="vw-m" aria-pressed="false">📱 Celular</button><button id="vw-d" aria-pressed="false">🖥 Computador</button></div>
     <nav class="tabs" role="tablist" aria-label="Áreas do protótipo">
       <button role="tab" id="t-app" aria-selected="true" data-tab="app">App / WhatsApp</button>
       <button role="tab" id="t-dev" aria-selected="false" data-tab="dev">Pit stop · devolução</button>
@@ -264,7 +324,7 @@ tr.gone td{opacity:.55}
   <div class="kpis" id="kpis"></div>
   <div class="opgrid">
     <div class="card" style="padding:8px 8px 4px">
-      <div class="tablewrap"><table aria-label="Carros em devolução">
+      <div class="tablewrap cardswrap"><table class="cards" aria-label="Carros em devolução">
         <thead><tr><th>Categoria</th><th>Chegada</th><th>Cliente informou</th><th>Etapas</th><th>Pronto previsto</th><th>Atende a retirada</th><th>Folga</th><th>Status</th><th></th></tr></thead>
         <tbody id="rows"></tbody>
       </table></div>
@@ -285,7 +345,7 @@ tr.gone td{opacity:.55}
   <p class="sub">Liberação por demanda: o estoque pronto atende primeiro; o que falta é coberto pelos carros em preparação, do que fica pronto antes para a retirada mais cedo. Use "+15 min" para ver as retiradas acontecerem.</p>
   <div class="catgrid" id="catgrid"></div>
   <div class="g2">
-    <div class="card" style="padding:8px 8px 4px"><h2 style="padding:8px 8px 0">Retiradas de hoje</h2><div class="tablewrap"><table aria-label="Retiradas">
+    <div class="card" style="padding:8px 8px 4px"><h2 style="padding:8px 8px 0">Retiradas de hoje</h2><div class="tablewrap cardswrap"><table class="cards" aria-label="Retiradas">
       <thead><tr><th>Hora</th><th>Categoria</th><th>Cliente</th><th>Carro destinado</th><th>Pronto previsto</th><th>Situação</th></tr></thead><tbody id="pickrows"></tbody></table></div></div>
     <div class="card"><h2>Como a devolução conversa com a entrega</h2><ul class="list">
       <li><b>Mesma categoria, mesma fila.</b> O cliente reserva uma categoria; qualquer carro pronto dela atende.</li>
@@ -312,9 +372,9 @@ tr.gone td{opacity:.55}
       <tr><td>Manutenção</td><td>119 min</td><td>8%</td></tr>
       <tr><td>Tratativa de avaria</td><td>85 min</td><td>7%</td></tr>
     </tbody></table></div>
-    <p class="tiny" style="margin:6px 0 0">Tempo total médio: 72 min na rotina, 159 só com manutenção, 142 só com avaria, 187 com as duas (4 casos). Em 143 devoluções a soma das etapas passa do tempo total: inconsistência de registro a investigar, já que as etapas acontecem uma de cada vez.</p></div>
+    <p class="tiny" style="margin:6px 0 0">Tempo total médio: 72 min na rotina, 159 só com manutenção, 142 só com avaria, 187 com as duas (4 casos). Em 143 devoluções a soma das etapas passa do tempo total. As etapas rodam em paralelo ou o registro está inconsistente? Pergunta de discovery.</p></div>
   </div>
-  <div class="card"><h2>Capacidade e resultado das 6 agências (base do case)</h2><div class="tablewrap"><table aria-label="Agências"><thead><tr><th>Agência</th><th>Frota</th><th>Boxes de lavagem</th><th>Boxes de manutenção</th><th>Equipe por dia</th><th>Frota por box de lavagem</th><th>Fila média na chegada</th><th>Tempo médio</th><th>Meta de tempo</th><th>Pronto antes da reserva</th></tr></thead><tbody id="agrows"></tbody></table></div>
+  <div class="card"><h2>Capacidade e resultado das 6 agências (base do case)</h2><div class="tablewrap cardswrap"><table class="cards" aria-label="Agências"><thead><tr><th>Agência</th><th>Frota</th><th>Boxes de lavagem</th><th>Boxes de manutenção</th><th>Equipe por dia</th><th>Frota por box de lavagem</th><th>Fila média na chegada</th><th>Tempo médio</th><th>Meta de tempo</th><th>Pronto antes da reserva</th></tr></thead><tbody id="agrows"></tbody></table></div>
   <p class="tiny" style="margin:6px 0 0">Frota, boxes, equipe e meta: aba AGENCIAS. Fila, tempo e pronto: 950 devoluções da base tratada. Base fictícia e de amostra: comparar taxas, não totais.</p></div>
 </section>
 
@@ -332,14 +392,14 @@ tr.gone td{opacity:.55}
       <li><b>A triagem do cliente não prevê manutenção nem avaria.</b> O operador marca na chegada o que já dá para ver (abastecimento, manutenção, avaria), e a inspeção confirma ou inclui. O painel mostra essas etapas porque elas mudam a folga e a entrega.</li>
     </ul></div>
     <div class="card"><h2>Do estado informado ao tipo provável</h2>
-      <table><thead><tr><th>Cliente informou</th><th>Tipo provável</th><th>Tempo previsto de pit stop</th></tr></thead><tbody>
+      <table><thead><tr><th>Cliente informou</th><th>Tipo provável</th><th>Tempo médio de pit stop</th></tr></thead><tbody>
         <tr><td>Limpo</td><td>Expressa</td><td>65 min</td></tr>
         <tr><td>Sujeira leve</td><td>Padrão</td><td>72 min</td></tr>
         <tr><td>Sujeira forte</td><td>Pesada</td><td>90 min</td></tr>
         <tr><td>Sem resposta</td><td>Padrão</td><td>72 min</td></tr>
         <tr><td colspan="2">+ só manutenção / + só avaria / + as duas</td><td>+86 / +70 / +115 min</td></tr>
       </tbody></table>
-      <p class="tiny" style="margin:8px 0 0">Tempo médio total dos carros de rotina, por tipo de lavagem (base tratada). Dispensada: 48 min. Para cada resposta, o tipo provável é o mais longo que ela costuma indicar, para não subestimar o tempo. Sem resposta, Padrão: é o tipo mais comum, e marcar todos como Pesada passaria esses carros na frente sem evidência. A correspondência é hipótese da Fase 1.</p>
+      <p class="tiny" style="margin:8px 0 0">Tempo médio total dos carros de rotina, todos os prazos, por tipo de lavagem (base tratada). Só os carros com cliente em até 2 h: 64 / 69 / 89 min. Dispensada: 48 min. Para cada resposta, o tipo provável é o mais longo que ela costuma indicar, para não subestimar o tempo. Sem resposta, Padrão: é o tipo mais comum, e marcar todos como Pesada passaria esses carros na frente sem evidência. A correspondência é hipótese da Fase 1.</p>
     </div>
     <div class="card"><h2>Ordem e quem lava</h2><ul class="list">
       <li><b>Prioridade:</b> menor folga até a retirada que o carro vai atender.</li>
@@ -356,11 +416,15 @@ tr.gone td{opacity:.55}
       <li><b>A loja já tem um painel de disponibilidade</b> por categoria? O que dá para reaproveitar?</li>
       <li><b>O cliente antecipa ou adia a devolução</b> com que frequência?</li>
     </ul></div>
-    <div class="card"><h2>O que medir</h2><ul class="list">
-      <li><b>Fase 1:</b> taxa de resposta por canal e por mensagem (véspera × lembrete), acerto da previsão.</li>
-      <li><b>Fase 2:</b> tempo total dos carros de rotina e retiradas atendidas no horário, em dias alternados com e sem a regra.</li>
-      <li><b>Redução de tempo nas duas pontas:</b> na devolução, da chegada do carro até ele estar liberado para a entrega; na retirada, da chegada do cliente até ele sair com o carro. Comparar dias com e sem a regra, na mesma agência, para dizer se houve redução e de quantos minutos.</li>
-      <li><b>Guardrails:</b> pronto a tempo dos carros com folga, relavagem, reclamação de limpeza, custo de lavagem, contestação.</li>
+    <div class="card"><h2>Piloto e o que medir</h2><ul class="list">
+      <li><b>Onde:</b> Guarulhos (maior atraso, 34%). Recife segue como hoje no mesmo período, para comparar a variação das duas.</li>
+      <li><b>Semanas 1 e 2:</b> discovery com a operação (critério do tipo, onde o carro espera, custo do WhatsApp).</li>
+      <li><b>M1:</b> pátio como hoje, já registrando entrada e saída do box. A mensagem da véspera roda para medir resposta por canal, acerto do tipo e tempo de atendimento na devolução; o pátio ainda não usa.</li>
+      <li><b>M2 e M3:</b> painel ligado todos os dias. <b>M4:</b> medir e decidir (escalar, ajustar ou parar).</li>
+      <li><b>Métrica que decide:</b> tempo médio dos carros de rotina com cliente em até 2 h. Hoje 70 min, meta 60 (tempo parado cai pela metade). Cerca de 100 carros antes e 100 depois; o volume real sai da discovery.</li>
+      <li><b>Toda semana:</b> % de clientes que respondem, acerto do tipo, % de sugestões seguidas pelo operador, % de carros com box registrado.</li>
+      <li><b>Não pode piorar:</b> carros com mais de 3 h de folga prontos (98%), contestação de cobrança (3%, meta até 3,5%), tempo médio de todos os carros (84 min).</li>
+      <li><b>Parar se:</b> carros com folga abaixo de 96% por 2 semanas; contestação acima de 3,5%; menos de 20% de resposta após 2 semanas (trocar canal ou mensagem); operador seguindo menos da metade das sugestões após 3 semanas (entender o motivo).</li>
     </ul></div>
   </div>
 </section>
@@ -376,6 +440,7 @@ var WASH={Expressa:{'Equipe própria':15.7,PrimeClean:15.3,EcoWash:19.5},'Padrã
 var STEPMIN={insp:10,abast:13,mnt:119,dmg:85};
 var EXS=['Equipe própria','PrimeClean','EcoWash'];
 var MAP={limpo:'Expressa',leve:'Padrão',forte:'Pesada',none:'Padrão'};
+var RANK={Dispensada:0,Expressa:1,'Padrão':2,Pesada:3};
 var LABEL={limpo:'Limpo',leve:'Sujeira leve',forte:'Sujeira forte',none:'Sem resposta'};
 var CATS=['Compacto','Sedan','SUV','Premium','Utilitário'];
 var AG={
@@ -462,11 +527,11 @@ function phoneClock(){return app.moment==='d1'?'20:15':'10:30'}
 function statusBar(){return '<div class="status"><span>'+phoneClock()+'</span><span>●●● 5G</span></div>'}
 function firstMsg(){
   return app.moment==='d1'
-    ? 'Oi, '+NAME+'! Sua devolução é <b>'+relDay(app.date)+', às '+app.time+'</b>, na '+AGNAME+'. 🚗<br><br>Conte como está o carro e agilize sua devolução: leva 10 segundos e não gera cobrança.'
-    : 'Oi, '+NAME+'! Lembrete: sua devolução é <b>'+relDay(app.date)+', às '+app.time+'</b>, na '+AGNAME+'. ⏰<br><br>Ainda dá tempo de contar como está o carro e agilizar sua chegada. Não gera cobrança.';
+    ? 'Oi, '+NAME+'! Sua devolução é <b>'+relDay(app.date)+', às '+app.time+'</b>, na '+AGNAME+'. 🚗<br><br>Conte como está o carro: leva 10 segundos, ajuda a loja a se preparar para a sua chegada e não gera cobrança.'
+    : 'Oi, '+NAME+'! Lembrete: sua devolução é <b>'+relDay(app.date)+', às '+app.time+'</b>, na '+AGNAME+'. ⏰<br><br>Ainda dá tempo de contar como está o carro. Leva 10 segundos e não gera cobrança.';
 }
 var FREE='<div class="free">✓ Sua resposta não gera cobrança. Ela só prepara a loja para a sua devolução.</div>';
-var FAST='<div class="fast">⚡ Ao sinalizar agora, você agiliza a sua devolução: a loja já separa o box e a equipe certos para o seu carro.</div>';
+var FAST='<div class="fast">⚡ Com a sua resposta, a loja já separa o box e a equipe certos antes de você chegar.</div>';
 var OPTS=[['limpo','Limpo','Sem sujeira aparente',0],['leve','Sujeira leve','Poeira, respingos de chuva',1],['forte','Sujeira forte','Lama, areia, pelos ou odor',2]];
 function stepsBar(n){var s='<div class="steps" aria-hidden="true">';for(var i=1;i<=4;i++)s+='<i class="'+(i<=n?'on':'')+'"></i>';return s+'</div>'}
 function changeKind(){
@@ -486,7 +551,7 @@ function renderApp(){
   if(app.step==='start'){
     var d=new Date();
     h=statusBar()+'<div class="scr lock"><div class="clock">'+phoneClock()+'</div><div class="date">'+WDL[d.getDay()]+', '+pad(d.getDate())+'/'+pad(d.getMonth()+1)+'</div>'+
-      '<div class="push"><div class="src"><span>App de locação</span><span>agora</span></div><b>'+(app.moment==='d1'?'Sua devolução é '+relDay(app.date)+' às '+app.time:'Lembrete: devolução '+relDay(app.date)+' às '+app.time)+'</b><span>Conte como está o carro e agilize sua devolução. Leva 10 segundos.</span></div>'+
+      '<div class="push"><div class="src"><span>App de locação</span><span>agora</span></div><b>'+(app.moment==='d1'?'Sua devolução é '+relDay(app.date)+' às '+app.time:'Lembrete: devolução '+relDay(app.date)+' às '+app.time)+'</b><span>Conte como está o carro. Leva 10 segundos e ajuda a loja a se preparar.</span></div>'+
       '<div style="flex:1"></div><button class="cta" id="go">Responder agora</button></div>';
   }
   if(app.step==='conf'){
@@ -518,7 +583,7 @@ function renderApp(){
   if(app.step==='done'){
     h=statusBar()+bar+'<div class="scr">'+stepsBar(4)+'<div class="done" aria-hidden="true">✓</div><p class="q" style="text-align:center">Pronto! A loja já sabe que você chega '+relDay(app.date)+' às '+app.time+'.</p>'+
       '<dl class="summary"><dt>Estado</dt><dd>'+LABEL[app.state]+'</dd><dt>Fotos</dt><dd>'+app.photos.length+'</dd><dt>Chegada</dt><dd>'+relDay(app.date)+', '+app.time+'</dd></dl>'+
-      '<div class="fast">⚡ Obrigado! Com a sua resposta, a sua devolução fica mais rápida.</div>'+FREE+'<div style="flex:1"></div><button class="cta" id="seeop2">Ver no painel do pit stop →</button></div>';
+      '<div class="fast">⚡ Obrigado! A loja já vai se preparar para receber o seu carro.</div>'+FREE+'<div style="flex:1"></div><button class="cta" id="seeop2">Ver no painel do pit stop →</button></div>';
   }
   s.innerHTML=h; bindApp();
 }
@@ -552,12 +617,12 @@ function askConfirm(){app.wa.expect='confirm';bot('Primeiro, confirma pra mim: d
 function askState(){
   app.wa.expect='state';
   var imgs='<div class="imgs">'+OPTS.map(function(o){return '<figure>'+carSVG(o[3],'w'+o[0])+'<figcaption>'+o[1]+' · <span style="font-weight:400">'+o[2]+'</span></figcaption></figure>'}).join('')+'</div>';
-  bot('Como está o carro? Escolha a opção mais parecida. ⚡ Ao sinalizar agora, você agiliza a sua devolução: a loja já separa o box e a equipe certos.',['Limpo','Sujeira leve','Sujeira forte'],imgs);
+  bot('Como está o carro? Escolha a opção mais parecida. ⚡ Assim a loja já separa o box e a equipe certos antes de você chegar.',['Limpo','Sujeira leve','Sujeira forte'],imgs);
 }
 function askPhoto(){app.wa.expect='photo';bot('Quer mandar uma foto? É opcional e ajuda a loja a separar o box certo. Toque em 📎 ou em "Enviar foto".',['Enviar foto','Pular'])}
 function waDone(){
   app.wa.expect='done';
-  bot('Pronto! ✅ A loja já sabe que você chega <b>'+relDay(app.date)+' às '+app.time+'</b>.<br><br>Obrigado: com a sua resposta, a sua devolução fica mais rápida. Ela <b>não gera cobrança</b>, só prepara a loja.');
+  bot('Pronto! ✅ A loja já sabe que você chega <b>'+relDay(app.date)+' às '+app.time+'</b>.<br><br>Obrigado! Com a sua resposta, a loja se prepara para receber o carro. Ela <b>não gera cobrança</b>.');
   finish();
 }
 function parseDT(txt){
@@ -575,10 +640,10 @@ function waInput(txt,fromBtn){
   if(e==='start'){alog('Canal: WhatsApp · '+(app.moment==='d1'?'1ª mensagem (véspera)':'lembrete no dia'));askConfirm()}
   else if(e==='confirm'){
     if(/^(confirmar|sim|ok|confirmo|isso|certo)/.test(low)){logChange();askState()}
-    else if(/mudar/.test(low)){app.wa.expect='newdt';bot('Sem problema! Escreva a nova data e o horário. Ex.: <i>hoje 16:00</i>, <i>amanhã 10h30</i> ou <i>05/10 9h</i>.')}
+    else if(/mudar/.test(low)){app.wa.expect='newdt';bot('Sem problema! Escreva a nova data e o horário. Ex.: <i>hoje 16:00</i>, <i>amanhã 10h30</i> ou <i>06/11 9h</i>.')}
     else {var p=parseDT(txt);if(p.date||p.time){applyDT(p)}else bot('Não entendi 🙈 Toque em "Confirmar" ou escreva a nova data e horário, ex.: <i>amanhã 15:00</i>.',['Confirmar','Mudar data ou horário'])}
   }
-  else if(e==='newdt'){var p2=parseDT(txt);if(p2.date||p2.time)applyDT(p2);else bot('Não entendi 🙈 Tente assim: <i>amanhã 15:00</i> ou <i>05/10 9h</i>.')}
+  else if(e==='newdt'){var p2=parseDT(txt);if(p2.date||p2.time)applyDT(p2);else bot('Não entendi 🙈 Tente assim: <i>amanhã 15:00</i> ou <i>06/11 9h</i>.')}
   else if(e==='state'){
     var st=/forte|lama|areia|pelo|odor/.test(low)?'forte':/leve|poeira|respingo/.test(low)?'leve':/limpo/.test(low)?'limpo':null;
     if(!st){bot('Pode escolher uma das opções: Limpo, Sujeira leve ou Sujeira forte.',['Limpo','Sujeira leve','Sujeira forte'])}
@@ -780,7 +845,7 @@ function renderOps(){
       '<td>'+LABEL[c.inf]+(c.photo?' <span class="tiny">· foto</span>':'')+'<div class="tiny">'+esc(c.cli)+'</div></td>'+
       '<td>'+stepChips(c)+'</td>'+
       '<td>'+(lib?'—':'<b>'+hm(ready(c))+'</b>')+'</td>'+
-      '<td>'+pk+'</td><td>'+(lib?'—':chip(f))+'</td><td>'+stLabel(c)+'</td><td style="white-space:nowrap">'+act+up+'</td></tr>';
+      '<td>'+pk+'</td><td>'+(lib?'—':chip(f))+'</td><td>'+stLabel(c)+'</td><td class="act" style="white-space:nowrap">'+act+up+'</td></tr>';
   }).join('');
   // wash queue
   var wq=CARS.filter(function(c){return c.status==='naloja'&&type(c)!=='Dispensada'&&c.steps.lav.s==='pend'}).sort(function(a,b){var fa=folga(a),fb=folga(b);if(fa===null)fa=9999;if(fb===null)fb=9999;return fa-fb});
@@ -792,12 +857,12 @@ function renderOps(){
   var risk=active.filter(function(c){return folga(c)<30}).length;
   var gaps=PICKS.filter(function(p){return p.status!=='entregue'&&!p.src}).length;
   var answered=CARS.filter(function(c){return c.inf!=='none'}).length;
-  var conf=CARS.filter(function(c){return c.confirmedHere&&c.inf!=='none'}), hit=conf.filter(function(c){return c.conf===MAP[c.inf]}).length;
+  var conf=CARS.filter(function(c){return c.confirmedHere&&c.inf!=='none'}), hit=conf.filter(function(c){return c.conf===MAP[c.inf]}).length, safe=conf.filter(function(c){return RANK[MAP[c.inf]]>=RANK[c.conf]}).length;
   document.getElementById('kpis').innerHTML=
     '<div class="kpi'+(risk?' alert':'')+'"><b>'+risk+'</b><span>carros com folga menor que 30 min</span></div>'+
     '<div class="kpi'+(gaps?' alert':'')+'"><b>'+gaps+'</b><span>retiradas de hoje sem carro previsto</span></div>'+
     '<div class="kpi"><b>'+Math.round(answered/CARS.length*100)+'%</b><span>responderam a triagem</span></div>'+
-    '<div class="kpi"><b>'+(conf.length?Math.round(hit/conf.length*100)+'%':'—')+'</b><span>acerto da previsão ('+conf.length+' confirmados hoje)</span></div>'+
+    '<div class="kpi"><b>'+(conf.length?Math.round(hit/conf.length*100)+'%':'—')+'</b><span>acertou o tipo · '+(conf.length?Math.round(safe/conf.length*100)+'% não subestimou':'—')+' ('+conf.length+' confirmados)</span></div>'+
     '<div class="kpi"><b>'+activeSteps+'</b><span>etapas em andamento (equipe do dia: '+A.eq+')</span></div>';
   renderEnt(); renderGes();
 }
@@ -835,12 +900,16 @@ function renderGes(){
   CARS.forEach(function(c){if(c.status!=='naloja')return;stepList(c).forEach(function(x){var s=c.steps[x[0]].s;if(s==='pend'||s==='alerta')st[x[0]][0]++;else if(s==='and')st[x[0]][1]++})});
   var names={insp:'Inspeção',abast:'Abastecimento',lav:'Lavagem',mnt:'Manutenção',dmg:'Tratativa de avaria'};
   var worst=Object.keys(st).sort(function(a,b){return st[b][0]-st[a][0]})[0];
+  var rot=CARS.filter(function(c){return c.status==='liberado'&&!hasMnt(c)&&!c.steps.dmg});
+  var rotAvg=rot.length?Math.round(rot.reduce(function(s,c){return s+(c.rel-c.arr)},0)/rot.length):null;
+  var washed=CARS.filter(function(c){return c.sugOk!==undefined}), followed=washed.filter(function(c){return c.sugOk}).length;
+  var lavDone=CARS.filter(function(c){return c.steps.lav&&c.steps.lav.s==='ok'}), boxed=lavDone.filter(function(c){return c.steps.lav.t0!=null&&c.steps.lav.t1!=null}).length;
   document.getElementById('gkpis').innerHTML=
-    '<div class="kpi"><b>'+(due.length?ontime+' de '+due.length:'—')+'</b><span>retiradas vencidas atendidas no horário</span></div>'+
-    '<div class="kpi'+(waiting?' alert':'')+'"><b>'+waiting+'</b><span>clientes esperando carro agora</span></div>'+
-    '<div class="kpi"><b>'+prep+'</b><span>carros em preparação ou a caminho</span></div>'+
-    '<div class="kpi"><b>'+stock+'</b><span>carros prontos no estoque</span></div>'+
-    '<div class="kpi'+(st[worst][0]?' alert':'')+'"><b style="font-size:18px">'+(st[worst][0]?names[worst]:'Sem fila')+'</b><span>'+(st[worst][0]?st[worst][0]+' carro(s) aguardando esta etapa':'nenhuma etapa com carro aguardando')+'</span></div>';
+    '<div class="kpi"><b>70 → 60 min</b><span>métrica que decide: rotina com cliente em até 2 h (hoje → meta)'+(rotAvg!==null?' · liberados hoje: '+rotAvg+' min':'')+'</span></div>'+
+    '<div class="kpi"><b>'+(washed.length?Math.round(followed/washed.length*100)+'%':'—')+'</b><span>sugestões de quem lava seguidas ('+followed+' de '+washed.length+')</span></div>'+
+    '<div class="kpi"><b>'+(lavDone.length?Math.round(boxed/lavDone.length*100)+'%':'—')+'</b><span>lavagens com entrada e saída do box registradas</span></div>'+
+    '<div class="kpi'+(waiting?' alert':'')+'"><b>'+waiting+'</b><span>clientes esperando carro agora · '+(due.length?ontime+' de '+due.length+' retiradas no horário':'nenhuma retirada vencida')+'</span></div>'+
+    '<div class="kpi'+(st[worst][0]?' alert':'')+'"><b style="font-size:18px">'+(st[worst][0]?names[worst]:'Sem fila')+'</b><span>'+(st[worst][0]?st[worst][0]+' carro(s) aguardando esta etapa':'nenhuma etapa com carro aguardando')+' · '+prep+' em preparação, '+stock+' no estoque</span></div>';
   var cap={insp:'equipe',abast:'equipe',lav:(A.bl-BL.filter(function(b){return b.car}).length)+' de '+A.bl+' boxes livres',mnt:(A.bm-BM.filter(function(b){return b.car}).length)+' de '+A.bm+' boxes livres',dmg:'equipe'};
   document.getElementById('stagerows').innerHTML=Object.keys(st).map(function(k){return '<tr'+(k===worst&&st[k][0]?' class="risk"':'')+'><td>'+names[k]+'</td><td>'+st[k][0]+'</td><td>'+st[k][1]+'</td><td>'+cap[k]+'</td></tr>'}).join('')+'<tr><td colspan="4" class="tiny">Equipe por dia nesta agência (base): '+A.eq+' pessoas. A base não traz a escala por turno.</td></tr>';
   document.getElementById('agrows').innerHTML=Object.keys(AG).map(function(k){var a=AG[k];return '<tr'+(k===agId?' class="mine"':'')+'><td><b>'+k+'</b> <span class="tiny">'+a.n+'</span></td><td>'+nf(a.frota)+'</td><td>'+a.bl+'</td><td>'+a.bm+'</td><td>'+a.eq+'</td><td>'+nf(a.frota/a.bl)+'</td><td>'+nf(a.fila,1)+'</td><td>'+nf(a.tempo,1)+' min</td><td>'+a.meta+' min</td><td>'+nf(a.pronto,1)+'%</td></tr>'}).join('');
@@ -923,7 +992,7 @@ function openSteps(c){
     });
     d.firstChild.innerHTML='<h2 style="margin:0">Etapas · '+c.cat+' <span class="tiny">'+c.p+' · '+esc(c.cli)+'</span></h2>'+
       '<div class="rule">Pronto previsto: <b>'+hm(ready(c))+'</b>'+(c.pick?' · atende a retirada de <b>'+hm(c.pick.t)+'</b> ('+c.pick.cli+') · folga '+chip(f):' · sem retirada próxima: vai para o estoque')+'</div>'+
-      '<p class="tiny" style="margin:0">Faça uma etapa por vez, na ordem que a operação pedir. O pronto previsto se ajusta a cada etapa concluída.</p>'+
+      '<p class="tiny" style="margin:0">Nesta simulação, uma etapa por vez, na ordem que a operação pedir. Se na loja as etapas rodam em paralelo é pergunta de discovery. O pronto previsto se ajusta a cada etapa concluída.</p>'+
       rows+
       '<button class="cta" id="dr-rel"'+(allDone(c)?'':' disabled')+'>Liberar para entrega</button><button class="ghost" id="dr-x">Fechar</button>';
     d.querySelector('#dr-x').onclick=function(){d.remove()};
@@ -932,14 +1001,14 @@ function openSteps(c){
   }
   function act(a,k){
     if(a==='start'){c.steps[k]={s:'and',t0:NOW};log(c.cat+' '+c.p+': '+({insp:'inspeção',abast:'abastecimento',dmg:'tratativa de avaria'})[k]+' iniciada')}
-    if(a==='end'){var st=c.steps[k];if(k==='lav'){var bx=BL.find(function(b){return b.car===c.p});if(bx)bx.car=null}if(k==='mnt'){var bm=BM.find(function(b){return b.car===c.p});if(bm)bm.car=null}st.s='ok';log(c.cat+' '+c.p+': '+({abast:'abastecimento',lav:'lavagem',mnt:'manutenção',dmg:'avaria'})[k]+' concluída')}
+    if(a==='end'){var st=c.steps[k];st.t1=NOW;if(k==='lav'){var bx=BL.find(function(b){return b.car===c.p});if(bx)bx.car=null}if(k==='mnt'){var bm=BM.find(function(b){return b.car===c.p});if(bm)bm.car=null}st.s='ok';log(c.cat+' '+c.p+': '+({abast:'abastecimento',lav:'lavagem',mnt:'manutenção',dmg:'avaria'})[k]+' concluída')}
     if(a==='inspok'){c.steps.insp.s='ok';log(c.cat+' '+c.p+': inspeção concluída sem pendência')}
     if(a==='inspmnt'){c.steps.insp.s='ok';c.steps.mnt={s:'pend'};log(c.cat+' '+c.p+': manutenção identificada na inspeção (+'+EXTRA.mnt+' min previstos)')}
     if(a==='inspdmg'){c.steps.insp.s='ok';c.steps.dmg={s:'pend'};log(c.cat+' '+c.p+': avaria encontrada na inspeção (+'+EXTRA.dmg+' min previstos)')}
     if(a==='wash'){
       var ex=document.getElementById('exsel').value, box=BL.find(function(b){return !b.car&&b.ex===ex}), sg=suggest(c);
       if(!box){log(c.cat+' '+c.p+': sem box livre de '+ex+'. Aguarde ou escolha outro executor.')}
-      else{box.car=c.p;c.steps.lav={s:'and',t0:NOW,ex:ex,box:box.id};log(c.cat+' '+c.p+': lavagem '+type(c)+' no '+box.id+' ('+ex+')'+(sg&&ex!==sg.ex?' · operador trocou '+sg.ex+' por '+ex:''))}
+      else{box.car=c.p;c.steps.lav={s:'and',t0:NOW,ex:ex,box:box.id};c.sugOk=!sg||ex===sg.ex;log(c.cat+' '+c.p+': lavagem '+type(c)+' no '+box.id+' ('+ex+')'+(sg&&ex!==sg.ex?' · operador trocou '+sg.ex+' por '+ex:''))}
     }
     if(a==='mntyes'){c.steps.mnt={s:'pend'};log(c.cat+' '+c.p+': manutenção confirmada (+'+EXTRA.mnt+' min previstos)')}
     if(a==='mntno'){c.steps.mnt={s:'desc'};log(c.cat+' '+c.p+': alerta de manutenção descartado')}
@@ -982,6 +1051,37 @@ function publish(build){
   renderOps();
 }
 
+/* =================== responsive: card labels + view switch =================== */
+function labelTables(){
+  document.querySelectorAll('table').forEach(function(t){
+    var hs=[].map.call(t.querySelectorAll('thead th'),function(th){return th.textContent.trim()});
+    if(!hs.length)return;
+    t.querySelectorAll('tbody tr').forEach(function(tr){[].forEach.call(tr.children,function(td,i){if(hs[i]&&!td.hasAttribute('data-label'))td.setAttribute('data-label',hs[i])})});
+  });
+}
+var VIEW=null;
+try{VIEW=localStorage.getItem('triagem-view')}catch(e){}
+function applyView(){
+  var H=document.documentElement, w=window.innerWidth||H.clientWidth, narrow=w<760;
+  var mode=VIEW||(narrow?'m':'d');
+  H.classList.remove('m','mframe','dzoom','lt900','lt1200');
+  H.style.removeProperty('--dz');
+  var eff;
+  if(mode==='m'){H.classList.add('m');if(!narrow)H.classList.add('mframe');eff=Math.min(w,430)}
+  else if(narrow){H.classList.add('dzoom');H.style.setProperty('--dz',(w/1280).toFixed(4));eff=1280}
+  else eff=w;
+  if(eff<1200)H.classList.add('lt1200');
+  if(eff<900)H.classList.add('lt900');
+  document.getElementById('vw-m').setAttribute('aria-pressed',mode==='m');
+  document.getElementById('vw-d').setAttribute('aria-pressed',mode!=='m');
+  var top=document.querySelector('.top');if(top)H.style.setProperty('--toph',top.offsetHeight+'px');
+}
+function setView(v){VIEW=v;try{localStorage.setItem('triagem-view',v)}catch(e){}applyView();window.scrollTo(0,0)}
+document.getElementById('vw-m').onclick=function(){setView('m')};
+document.getElementById('vw-d').onclick=function(){setView('d')};
+window.addEventListener('resize',applyView);
+var _ro=renderOps;renderOps=function(){_ro();labelTables()};
+
 /* =================== tabs =================== */
 var OPS=['dev','ent','ges'];
 function showTab(t){
@@ -992,10 +1092,8 @@ function showTab(t){
   window.scrollTo(0,0);
 }
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){showTab(b.dataset.tab)})});
-initSim(); renderApp();
+applyView(); initSim(); renderApp(); labelTables();
 var hh=(location.hash||'').slice(1); if(['dev','ent','ges','how'].indexOf(hh)>=0)showTab(hh);
 })();
 </script>
-</body></html>
-
 </body></html>
